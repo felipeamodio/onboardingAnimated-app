@@ -1,6 +1,12 @@
 import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
-import { SharedValue } from "react-native-reanimated";
+import Animated, {
+  Extrapolation,
+  interpolate,
+  SharedValue,
+  useAnimatedStyle,
+} from "react-native-reanimated";
 import { OnboardingData } from "../assets/animation/data/data";
+import LottieView from "lottie-react-native";
 
 type RenderItemProps = {
   index: number;
@@ -12,11 +18,123 @@ export function RenderItem({ index, x, item }: RenderItemProps) {
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const circleSize = SCREEN_WIDTH;
   const lottieSize = SCREEN_WIDTH * 0.9;
-  const circleRedius = SCREEN_WIDTH / 2;
+  const circleRadius = SCREEN_WIDTH / 2;
+
+  const animationRange = [
+    (index - 1) * SCREEN_WIDTH,
+    index * SCREEN_WIDTH,
+    (index + 1) * SCREEN_WIDTH,
+  ];
+
+  const lottieAnimation = useAnimatedStyle(() => ({
+    transform: [
+      {
+        translateY: interpolate(
+          x.value,
+          animationRange,
+          [200, 0, -200],
+          Extrapolation.CLAMP
+        ),
+      },
+    ],
+  }));
+
+  const circleAnimation = useAnimatedStyle(() => ({
+    transform: [
+      {
+        scale: interpolate(
+          x.value,
+          animationRange,
+          [1, 4, 4],
+          Extrapolation.CLAMP
+        ),
+      },
+    ],
+  }));
+
+  const titleAnimation = useAnimatedStyle(() => ({
+    transform: [
+      {
+        translateX: interpolate(
+          x.value,
+          animationRange,
+          [100, 0, -100],
+          Extrapolation.CLAMP
+        ),
+      },
+    ],
+    opacity: interpolate(
+      x.value,
+      animationRange,
+      [0, 1, 0],
+      Extrapolation.CLAMP
+    ),
+  }));
+
+  const descriptionAnimation = useAnimatedStyle(() => ({
+    transform: [
+      {
+        translateX: interpolate(
+          x.value,
+          animationRange,
+          [-100, 0, 100],
+          Extrapolation.CLAMP
+        ),
+      },
+    ],
+    opacity: interpolate(
+      x.value,
+      animationRange,
+      [0, 1, 0],
+      Extrapolation.CLAMP
+    ),
+  }));
 
   return (
     <View style={[styles.itemContainer, { width: SCREEN_WIDTH }]}>
-      <Text>RenderItem</Text>
+      <View style={styles.circleContainer}>
+        <Animated.View
+          style={[
+            styles.circle,
+            circleAnimation,
+            {
+              backgroundColor: item.backgroundColor,
+              width: circleSize,
+              height: circleSize,
+              borderRadius: circleRadius,
+            },
+          ]}
+        />
+      </View>
+
+      <Animated.View style={lottieAnimation}>
+        <LottieView
+          source={item.animation}
+          autoPlay
+          loop
+          resizeMode="contain"
+          style={[styles.lottie, { width: lottieSize, height: lottieSize }]}
+        />
+      </Animated.View>
+
+      <View style={styles.textContainer}>
+        <Animated.Text
+          style={[styles.title, { color: item.textColor }, titleAnimation]}
+        >
+          {item.text}
+        </Animated.Text>
+        {item.description && (
+          <Animated.Text
+            style={[
+              styles.description,
+              { color: item.textColor },
+              descriptionAnimation,
+            ]}
+          >
+            {item.description}
+          </Animated.Text>
+        )}
+      </View>
     </View>
   );
 }
@@ -27,5 +145,32 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     marginBottom: 120,
+  },
+  circleContainer: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: "center",
+    justifyContent: "flex-end",
+  },
+  circle: {
+    position: "absolute",
+  },
+  lottie: {
+    alignSelf: "center",
+  },
+  textContainer: {
+    paddingHorizontal: 20,
+    alignItems: "center",
+  },
+  title: {
+    textAlign: "center",
+    fontSize: 35,
+    fontWeight: "700",
+    marginBottom: 10,
+  },
+  description: {
+    textAlign: "center",
+    fontSize: 18,
+    fontWeight: "400",
+    opacity: 0.8,
   },
 });
