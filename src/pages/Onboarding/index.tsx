@@ -7,6 +7,7 @@ import Animated, {
   useSharedValue,
 } from "react-native-reanimated";
 import { RenderItem } from "../../components/RenderItem";
+import { Pagination } from "../../components/Pagination";
 
 export default function Onboarding() {
   const scrollRef = useAnimatedRef<FlatList<OnboardingData>>();
@@ -59,6 +60,9 @@ export default function Onboarding() {
         onViewableItemsChanged={onViewableItemsChanges}
         viewabilityConfig={viewabilityConfig.current}
       />
+      <View style={styles.bottomView}>
+        <Pagination data={data} x={x} />
+      </View>
     </View>
   );
 }
@@ -66,5 +70,16 @@ export default function Onboarding() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  bottomView: {
+    position: "absolute",
+    bottom: 20,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginHorizontal: 30,
+    paddingVertical: 30,
   },
 });
