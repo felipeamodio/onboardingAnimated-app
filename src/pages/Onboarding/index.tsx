@@ -8,6 +8,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { RenderItem } from "../../components/RenderItem";
 import { Pagination } from "../../components/Pagination";
+import { Button } from "../../components/Button";
 
 export default function Onboarding() {
   const scrollRef = useAnimatedRef<FlatList<OnboardingData>>();
@@ -62,6 +63,12 @@ export default function Onboarding() {
       />
       <View style={styles.bottomView}>
         <Pagination data={data} x={x} />
+        <Button
+          scrollRef={scrollRef}
+          scrollIndex={scrollIndex}
+          dataLength={data.length}
+          x={x}
+        />
       </View>
     </View>
   );

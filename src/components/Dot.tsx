@@ -1,9 +1,11 @@
 import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import Animated, {
+  Extrapolation,
   interpolate,
   interpolateColor,
   SharedValue,
   useAnimatedStyle,
+  withSpring,
 } from "react-native-reanimated";
 
 type DotProps = {
@@ -41,11 +43,29 @@ export function Dot({
       activeSize,
       inactiveSize,
     ]);
+
+    const opacity = interpolate(
+      x.value,
+      animationRange,
+      [0.5, 1, 0.5],
+      Extrapolation.CLAMP
+    );
+
+    const scale = interpolate(
+      x.value,
+      animationRange,
+      [0.8, 1.2, 0.8],
+      Extrapolation.CLAMP
+    );
+
     return {
       width: sizeAnimation,
       height: sizeAnimation,
+      opacity: opacity,
+      transform: [{ scale: withSpring(scale, { damping: 15 }) }],
     };
   });
+
   const animatedColor = useAnimatedStyle(() => {
     const backgroundColor = interpolateColor(
       x.value,

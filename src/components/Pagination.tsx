@@ -17,7 +17,7 @@ export function Pagination({
   data,
   x,
   activeDotColor = "#4527A0",
-  activeDotSize = 30,
+  activeDotSize = 25,
   containerStyle = {},
   dotColor = "#1995E3",
   dotSize = 10,
